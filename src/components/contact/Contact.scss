@@ -1,0 +1,26 @@
+.contact {
+    margin: 0 auto;
+    text-align: center;
+    display: block;
+    &__btn {
+        margin-top: 25px;
+        background: transparent;
+        border: 1px solid #978F7F;
+        border-radius: 4px;
+        padding: 8px; 
+        font-weight: 300;
+        font-size: 18px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.02em;
+        color: #978F7F;
+        cursor: pointer;
+        transition: .3s all;
+        display: inline-block;
+        text-decoration: none;
+        &:hover {
+            background: #FFF3DD;
+            color: #3C3C3C;
+        }
+    }
+}

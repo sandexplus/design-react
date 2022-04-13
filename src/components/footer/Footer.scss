@@ -1,0 +1,36 @@
+.footer__main {
+    background: #151512;
+    padding-bottom: 75px;
+    padding-top: 75px;
+    &__title {
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.02em;
+        color: #978F7F;
+        max-width: 330px;
+        margin: 0 auto;
+    }
+    &__btn {
+        font-weight: 300;
+        font-size: 18px;
+        line-height: 22px;
+        text-align: center;
+        letter-spacing: 0.02em;
+        color: #978F7F;
+        width: 130px;
+        height: 35px;
+        display: block;
+        margin: 0 auto;
+        margin-top: 20px;
+        border-radius: 4px;
+        border: 1px solid #978F7F;
+        transition: .3s all;
+        text-decoration: none;
+        padding: 5px 0;
+        &:hover {
+            background: #FFF3DD;
+        }
+    }
+}
