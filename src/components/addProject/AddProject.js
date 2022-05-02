@@ -20,8 +20,12 @@ const AddProject = (props) => {
     }  
     
     const handleProjImgs = (e) => {
+        const index = +e.target.dataset.number;
         let compareFiles = [];
-        let newState = [...projImgs];
+        let newState = [];
+        if (projImgs[index]) {
+            newState = [...projImgs[index]];
+        }
         if (!newState || newState.length < 1) {
             for (let i = 0; i < e.target.files.length; i++) {
                 newState.push(e.target.files[i]) 
@@ -39,14 +43,23 @@ const AddProject = (props) => {
                 }
 
             }
-                    
             newState = [...newState, ...compareFiles];
         }
-        setProjImgs([...newState]);
+    /*         let newArr = projImgs;
+            newArr[index] = [...newState]; */
+        // console.log(newArr)
+        setProjImgs(projImgs => {
+            projImgs[index] = [...newState]
+            return [...projImgs];
+        }); 
     }
 
-    const showProjImgs = () => {
-        const imgTags = projImgs.map(item => {
+    const showProjImgs = (index) => {
+        if (!projImgs || !projImgs[index]) {
+            return []
+        }
+        console.log(1)
+        const imgTags = projImgs[index].map(item => {
             return <img key={item.size} src={URL.createObjectURL(item)} alt="" className="add__proj-img" />;
         })
 
@@ -110,11 +123,28 @@ const AddProject = (props) => {
                         <input data-number='2' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
-                </div> 
+                </div>  
                 <div className="add__inputs">
                     <input placeholder="Название" type="text" className="add__input-name" />
                     <input placeholder="Название" type="text" className="add__input-name" />
                     <input placeholder="Название" type="text" className="add__input-name" />
+                </div>
+                <div className="add__files">
+                    <div className="add__files1">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='0' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(0).map(item => item)}
+                        </div>
+                    <div className="add__files2">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='1' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(1).map(item => item)}
+                    </div>
+                    <div className="add__files3">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='2' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(2).map(item => item)}
+                    </div>
                 </div>
                 </>: 
                 props.type === '2' ?
@@ -159,11 +189,6 @@ const AddProject = (props) => {
                 </>
                 : null
                 }
-                <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы проекта
-                <input onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                <div className="add__files">
-                    {projImgs.length ? showProjImgs().map(item => item) : null}
-                </div>
                 {projImgs.length ? <button className="add__submit" onClick={() => document.querySelector('.popup-save').classList.add('popup_show')}>Сохранить проект</button> : null}
             </div>
         </div>

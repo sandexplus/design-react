@@ -23,6 +23,8 @@
         }
     }
     &__button {
+        display: block;
+        text-decoration: none;
         font-weight: 300;
         font-size: 18px;
         line-height: 22px;
@@ -33,6 +35,9 @@
         width: 470px;
         height: 35px;
         background: transparent;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
         transition: .3s all;
         &:hover {
