@@ -4,6 +4,9 @@ import MainPage from '../mainPage/MainPage';
 import Communication from '../communication/Communication';
 import ServicePage from '../servicePage/ServicePage';
 import ServiceTemplate from '../serviceTemplate/ServiceTemplate';
+import AdminLogin from '../adminLogin/AdminLogin';
+import ChooseForm from '../chooseForm/ChooseForm';
+import AddProject from '../addProject/AddProject';
 
 function App() {
     return (
@@ -106,6 +109,26 @@ function App() {
                 imgs: []
               }
             ]}/>}/>
+          <Route
+            path='/admin'
+            element={<AdminLogin/>}
+          />
+          <Route 
+            path='/choose-form'
+            element={<ChooseForm/>}  
+          />
+          <Route
+            path='/add-project1'
+            element={<AddProject type='1'/>}
+          />
+          <Route
+            path='/add-project2'
+            element={<AddProject type='2'/>}
+          />
+          <Route
+            path='/add-project3'
+            element={<AddProject type='3'/>}
+          />
           <Route
             path="*"
             element={

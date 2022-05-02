@@ -1,0 +1,90 @@
+.choose {
+    &-page {
+        width: 100vw;
+        min-height: 100vh;
+        background: #151512;
+        padding-top: 62px;
+        padding-bottom: 200px;
+    }
+    &-title {
+        font-weight: 400;
+        font-size: 32px;
+        line-height: 75px;
+        text-align: center;
+        letter-spacing: 0.02em;
+        color: #FFF3DD;
+    }
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+        max-width: 860px;
+        margin: 0 auto ;
+        margin-top: 44px;
+    }
+    &__block {
+        transition: .3s all;
+    }
+    &__item {
+        transition: .3s all;
+        &-first {
+            height: 211px;
+            padding: 13px;
+            border: 2px solid #978F7F;
+            display: flex;
+            gap: 13px;
+            & .choose__block {
+                &:first-child {
+                    width: 45%;
+                }
+                &:nth-child(2) {
+                    width: 25%;
+                }
+                &:last-child {
+                    width: 30%;
+                }
+            }
+        }
+        &-second {
+            height: 211px;
+            padding: 13px;
+            border: 2px solid #978F7F;
+            display: flex;
+            gap: 13px;
+            & .choose__block {
+                &:first-child {
+                    width: 50%;
+                }
+                &:last-child {
+                    width: 50%;
+                }
+            }
+        }
+        &-third {
+            height: 211px;
+            padding: 13px;
+            border: 2px solid #978F7F;
+            display: flex;
+            gap: 13px;
+            & .choose__block {
+                &:first-child {
+                    width: 30%;
+                }
+                &:nth-child(2) {
+                    width: 25%;
+                }
+                &:last-child {
+                    width: 45%;
+                }
+            }
+        }
+        &:hover {
+            & .choose__block {
+                background: #FFF3DD;
+            }
+        }
+    }
+    &__block {
+        background: #978F7F;
+    }
+}
