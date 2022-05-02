@@ -163,6 +163,18 @@ const AddProject = (props) => {
                     <input placeholder="Название" type="text" className="add__input-name" />
                     <input placeholder="Название" type="text" className="add__input-name" />
                 </div>
+                <div className="add__files">
+                    <div className="add__files1">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='0' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(0).map(item => item)}
+                        </div>
+                    <div className="add__files2">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='1' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(1).map(item => item)}
+                    </div>
+                </div>
                 </>
                 :
                 props.type === '3' ?
@@ -185,6 +197,23 @@ const AddProject = (props) => {
                     <input placeholder="Название" type="text" className="add__input-name" />
                     <input placeholder="Название" type="text" className="add__input-name" />
                     <input placeholder="Название" type="text" className="add__input-name" />
+                </div>
+                <div className="add__files">
+                    <div className="add__files1">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='0' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(0).map(item => item)}
+                        </div>
+                    <div className="add__files2">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='1' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(1).map(item => item)}
+                    </div>
+                    <div className="add__files3">
+                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
+                        <input data-number='2' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
+                        {showProjImgs(2).map(item => item)}
+                    </div>
                 </div>
                 </>
                 : null
