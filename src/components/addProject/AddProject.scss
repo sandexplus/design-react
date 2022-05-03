@@ -59,15 +59,16 @@
     }
     &__input-name {
         width: 33%;
-        height: 50px;
+        min-height: 120px;
+        resize: none;
         border: 1px solid #978F7F;
         background: transparent;
         font-weight: 400;
         font-size: 24px;
-        line-height: 75px;
         letter-spacing: 0.02em;
         color: #978F7F;
         padding-left: 15px;
+        padding-top: 15px;
     }
     &__files > div {
         width: 100%;

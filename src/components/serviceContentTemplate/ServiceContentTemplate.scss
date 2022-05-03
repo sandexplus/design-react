@@ -50,3 +50,30 @@
         border-bottom: 1px solid #FFF3DD;
     }
 }
+
+.service-content__slider {
+    position: relative;
+}
+
+.prev, .next {
+    position: absolute;
+    z-index: 999;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    & svg path {
+        transition: .3s all;
+    }
+    &:hover {
+        & svg path {
+            fill: #000;
+            fill-opacity: .75;
+        }
+    }
+}
+.prev {
+    left: 25px;
+}
+.next {
+    right: 25px;
+}

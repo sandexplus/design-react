@@ -102,7 +102,7 @@ const AddProject = (props) => {
                 <div className="popup-container">
                     <div className="popup-title">Сохранить?</div>
                     <div className="popup-btns">
-                        <div className="popup-btn" onClick={(e) => closePopup(e)}>Да</div>
+                        <div className="popup-btn" onClick={relocateBack}>Да</div>
                         <div className="popup-btn" onClick={(e) => closePopup(e)}>Отмена</div>
                     </div>
                 </div>
@@ -125,9 +125,9 @@ const AddProject = (props) => {
                     </label>
                 </div>  
                 <div className="add__inputs">
-                    <input placeholder="Название" type="text" className="add__input-name" />
-                    <input placeholder="Название" type="text" className="add__input-name" />
-                    <input placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
                 </div>
                 <div className="add__files">
                     <div className="add__files1">
@@ -160,8 +160,8 @@ const AddProject = (props) => {
                     </label>
                 </div>
                 <div className="add__inputs">
-                    <input placeholder="Название" type="text" className="add__input-name" />
-                    <input placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
                 </div>
                 <div className="add__files">
                     <div className="add__files1">
@@ -194,9 +194,9 @@ const AddProject = (props) => {
                     </label>
                 </div>
                 <div className="add__inputs">
-                    <input placeholder="Название" type="text" className="add__input-name" />
-                    <input placeholder="Название" type="text" className="add__input-name" />
-                    <input placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
                 </div>
                 <div className="add__files">
                     <div className="add__files1">

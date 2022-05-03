@@ -25,6 +25,7 @@ const ServiceTemplate = (props) => {
                             const dir = i % 2 === 0 ? 0 : 1;
                             return (
                                 <ServiceContentTemplate 
+                                key={Math.random()}
                                 dir={dir} 
                                 name={item.name}
                                 descr={item.descr}
