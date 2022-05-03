@@ -57,7 +57,7 @@
 
 .prev, .next {
     position: absolute;
-    z-index: 999;
+    z-index: 1;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
