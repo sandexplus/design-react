@@ -3,68 +3,26 @@ import './AddProject.scss';
 
 const AddProject = (props) => {
 
-    const [photos, setPhotos] = useState([]);
-    const [projImgs, setProjImgs] = useState([]);
+    const baseUrl = 'https://freckle-pretty-snail.glitch.me';
 
-    const handlePhoto = (e) => {
-        let newState = [...photos];
-        newState[e.target.dataset.number] = e.target.files[0];
-        setPhotos([...newState]);
-        const imgContainer = e.target.parentElement.querySelector('.add__img');
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imgContainer.setAttribute('src', e.target.result);   
-            imgContainer.style.opacity = 1;
-        }
-        reader.readAsDataURL(e.target.files[0]);
-    }  
+    const [data, setData] = useState([]);
     
-    const handleProjImgs = (e) => {
-        const index = +e.target.dataset.number;
-        let compareFiles = [];
-        let newState = [];
-        if (projImgs[index]) {
-            newState = [...projImgs[index]];
-        }
-        if (!newState || newState.length < 1) {
-            for (let i = 0; i < e.target.files.length; i++) {
-                newState.push(e.target.files[i]) 
-            }
-        } else {
-            for (let newFile of e.target.files) {
-                let flag = false;
-                newState.forEach(item => {
-                    if (newFile.size === item.size) {
-                        flag = true;
-                    }
-                })
-                if (!flag) {
-                    compareFiles.push(newFile);  
-                }
-
-            }
-            newState = [...newState, ...compareFiles];
-        }
-    /*         let newArr = projImgs;
-            newArr[index] = [...newState]; */
-        // console.log(newArr)
-        setProjImgs(projImgs => {
-            projImgs[index] = [...newState]
-            return [...projImgs];
-        }); 
+    async function getServerData(url) {
+        await fetch(url + '/photos')
+                     .then(res => res.json())
+                     .then(res => {
+                         console.log(res);
+                         setData(res);
+                     });
     }
 
-    const showProjImgs = (index) => {
-        if (!projImgs || !projImgs[index]) {
-            return []
+    useEffect(() => {
+        if (localStorage.getItem('designlogin') === '') {
+            window.location = '/admin';
         }
-        console.log(1)
-        const imgTags = projImgs[index].map(item => {
-            return <img key={item.size} src={URL.createObjectURL(item)} alt="" className="add__proj-img" />;
-        })
+        getServerData(baseUrl)
+    }, []);
 
-        return imgTags;
-    }
 
     const relocateBack = () => {
         window.location.href = '/choose-form';
@@ -74,6 +32,92 @@ const AddProject = (props) => {
         e.target.parentElement.parentElement.parentElement.classList.remove('popup_show')
     }
 
+    async function putData(url, data) {
+        console.log(data)
+        const rawResponse = await fetch(url, {
+            method: 'PUT',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(content => {
+            console.log(content);
+        })
+        
+    }
+
+    const addMorePics = (e) => {
+        const picsCont = document.querySelector(`.add__photos[data-pos="${e.target.dataset.btn}"]`);
+        
+        const newTextArea = document.createElement('textarea');
+        newTextArea.classList.add('add__input-name');
+        newTextArea.placeholder = "Фотографи проекта";
+        newTextArea.setAttribute('name', 'preview');
+        newTextArea.dataset.photo = e.target.dataset.btn;
+        picsCont.append(newTextArea);
+    }
+
+    const createProj = (name, photo, preview, num) => {
+        const proj = {};
+        name.forEach(names => {
+
+            if (+names.dataset.name === num) {
+                proj.name = names.value;
+            }
+        })
+        photo.forEach(photos => {
+            console.log(photos)
+            if (+photos.dataset.preview === num) {
+                proj.photo = photos.value;
+            }
+        })
+        proj.preview = [];
+        preview.forEach(previews => {
+            if (+previews.dataset.photo === num) {
+                proj.preview.push(previews.value);
+            }
+        })
+
+        return proj;
+    }
+
+    const saveProj = (e) => {
+        e.preventDefault();
+        const name = document.querySelectorAll(`[data-name]`);
+        const photo = document.querySelectorAll(`[data-preview]`);
+        const preview = document.querySelectorAll(`[data-photo]`);
+        let newData = data;
+        let id = 0;
+
+        data.forEach((item, i) => {
+            if (item.login === localStorage.getItem('designlogin')) {
+                const proj = [];
+                id = item.id;
+                proj.push(createProj(name, photo, preview, 1));
+                proj.push(createProj(name, photo, preview, 2));
+                proj.push(createProj(name, photo, preview, 3));
+                newData[i].works.push(proj);
+                console.log(newData);
+            }
+        })
+        let dataToPut;
+        newData.forEach((item, i) => {
+            if (item.login === localStorage.getItem('designlogin')) {
+                dataToPut = newData[i];
+            }
+        })
+        
+
+        setData(newData);
+        putData(`${baseUrl}/photos/${id}`, dataToPut)
+    }
+
+    const openPopup = () => {
+        document.querySelector('.popup-save').classList.add('popup_show');
+    }
+ 
     return (
         <div className="add-page">
             <h1 className="choose-title">Загрузите файлы и дайте названия проектам</h1>
@@ -102,7 +146,7 @@ const AddProject = (props) => {
                 <div className="popup-container">
                     <div className="popup-title">Сохранить?</div>
                     <div className="popup-btns">
-                        <div className="popup-btn" onClick={relocateBack}>Да</div>
+                        <div className="popup-btn" onClick={saveProj}>Да</div>
                         <div className="popup-btn" onClick={(e) => closePopup(e)}>Отмена</div>
                     </div>
                 </div>
@@ -112,68 +156,102 @@ const AddProject = (props) => {
                 <>
                 <div className="choose__item choose__item-first">
                     <label className="choose__block">
-                        <input data-number='0' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='0' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                     <label className="choose__block">
-                        <input data-number='1' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='1' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                     <label className="choose__block">
-                        <input data-number='2' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='2' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                 </div>  
                 <div className="add__inputs">
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="1" maxLength={45} name="name" placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="2" maxLength={45} name="name" placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="3" maxLength={45} name="name" placeholder="Название" type="text" className="add__input-name" />
                 </div>
-                <div className="add__files">
-                    <div className="add__files1">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='0' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(0).map(item => item)}
-                        </div>
-                    <div className="add__files2">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='1' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(1).map(item => item)}
+                <div className="add__inputs">
+                    <textarea data-preview="1" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                    <textarea data-preview="2" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                    <textarea data-preview="3" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                </div>
+                <div className="add__inputs">
+                    <div data-pos="1" className="add__photos">
+                        <textarea data-photo="1" name="preview" placeholder="Фотографи проекта" type="text" className="add__input-name" />
                     </div>
-                    <div className="add__files3">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='2' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(2).map(item => item)}
+                    <div data-pos="2" className="add__photos">
+                        <textarea data-photo="2" name="preview" placeholder="Фотографи проекта" type="text" className="add__input-name" />
                     </div>
+                    <div data-pos="3" className="add__photos">
+                        <textarea data-photo="3" name="preview" placeholder="Фотографи проекта" type="text" className="add__input-name" />
+                    </div>
+                </div>
+                <div className="add__inputs">
+                    <button onClick={(e) => addMorePics(e)} data-btn="1" className="add__more-pics">
+                        <svg data-btn="1" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="1" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="1" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
+                    <button onClick={(e) => addMorePics(e)} data-btn="2" className="add__more-pics">
+                        <svg data-btn="2" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="2" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="2" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
+                    <button onClick={(e) => addMorePics(e)} data-btn="3" className="add__more-pics">
+                        <svg data-btn="3" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="3" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="3" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
                 </div>
                 </>: 
                 props.type === '2' ?
                 <>
                 <div className="choose__item choose__item-second">
                     <label className="choose__block">
-                        <input data-number='0' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='0' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                     <label className="choose__block">
-                        <input data-number='1' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='1' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                 </div>
                 <div className="add__inputs">
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="1" maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="2" maxLength={45} placeholder="Название" type="text" className="add__input-name" />
                 </div>
-                <div className="add__files">
-                    <div className="add__files1">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='0' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(0).map(item => item)}
-                        </div>
-                    <div className="add__files2">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='1' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(1).map(item => item)}
+                <div className="add__inputs">
+                    <textarea data-preview="1" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                    <textarea data-preview="2" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                    {/* <textarea data-preview="3" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" /> */}
+                </div>
+                <div className="add__inputs">
+                    <div data-pos="1" className="add__photos">
+                        <textarea data-photo="1" placeholder="Фотографи проекта" type="text" className="add__input-name" />
                     </div>
+                    <div data-pos="2" className="add__photos">
+                        <textarea data-photo="2" placeholder="Фотографи проекта" type="text" className="add__input-name" />
+                    </div>
+                </div>
+                <div className="add__inputs">
+                    <button onClick={(e) => addMorePics(e)} data-btn="1" className="add__more-pics">
+                        <svg data-btn="1" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="1" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="1" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
+                    <button onClick={(e) => addMorePics(e)} data-btn="2" className="add__more-pics">
+                        <svg data-btn="2" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="2" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="2" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
                 </div>
                 </>
                 :
@@ -181,44 +259,63 @@ const AddProject = (props) => {
                 <>
                 <div className="choose__item choose__item-third">
                     <label className="choose__block">
-                        <input data-number='0' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='0' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                     <label className="choose__block">
-                        <input data-number='1' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='1' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                     <label className="choose__block">
-                        <input data-number='2' onChange={(e) => handlePhoto(e)} type="file" accept="image/*" className="add__input" />
+                        <input data-number='2' type="file" accept="image/*" className="add__input" />
                         <img src="#" alt="" className='add__img' />
                     </label>
                 </div>
                 <div className="add__inputs">
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
-                    <textarea maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="1" maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="2" maxLength={45} placeholder="Название" type="text" className="add__input-name" />
+                    <textarea data-name="3" maxLength={45} placeholder="Название" type="text" className="add__input-name" />
                 </div>
-                <div className="add__files">
-                    <div className="add__files1">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='0' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(0).map(item => item)}
-                        </div>
-                    <div className="add__files2">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='1' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(1).map(item => item)}
+                <div className="add__inputs">
+                    <textarea data-preview="1" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                    <textarea data-preview="2" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                    <textarea data-preview="3" name="photo" placeholder="Фото для превью" type="text" className="add__input-name" />
+                </div>
+                <div className="add__inputs">
+                    <div data-pos="1" className="add__photos">
+                        <textarea data-photo="1" placeholder="Фотографи проекта" type="text" className="add__input-name" />
                     </div>
-                    <div className="add__files3">
-                        <label className='add__project-files-label' htmlFor="addFiles">Добавить файлы
-                        <input data-number='2' onChange={(e) => handleProjImgs(e)} type="file" name='addFiles' multiple accept='image/*' className="add__project-files" /></label>
-                        {showProjImgs(2).map(item => item)}
+                    <div data-pos="2" className="add__photos">
+                        <textarea data-photo="2" placeholder="Фотографи проекта" type="text" className="add__input-name" />
                     </div>
+                    <div data-pos="3" className="add__photos">
+                        <textarea data-photo="3" placeholder="Фотографи проекта" type="text" className="add__input-name" />
+                    </div>
+                </div>
+                <div className="add__inputs">
+                    <button onClick={(e) => addMorePics(e)} data-btn="1" className="add__more-pics">
+                        <svg data-btn="1" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="1" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="1" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
+                    <button onClick={(e) => addMorePics(e)} data-btn="2" className="add__more-pics">
+                        <svg data-btn="2" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="2" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="2" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
+                    <button onClick={(e) => addMorePics(e)} data-btn="3" className="add__more-pics">
+                        <svg data-btn="3" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line data-btn="3" x1="11.5" y1="0.5" x2="11.5" y2="21.5" stroke="#978F7F"/>
+                            <line data-btn="3" x1="21.5" y1="11.5" x2="0.5" y2="11.5" stroke="#978F7F"/>
+                        </svg>
+                    </button>
                 </div>
                 </>
                 : null
                 }
-                {projImgs.length ? <button className="add__submit" onClick={() => document.querySelector('.popup-save').classList.add('popup_show')}>Сохранить проект</button> : null}
+                <button className="add__submit" onClick={openPopup}>Сохранить проект</button>
             </div>
         </div>
     )

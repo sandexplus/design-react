@@ -21,6 +21,24 @@
             }
         }
     }
+    &__photos {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        width: 33%;
+        row-gap: 5px;
+        & textarea {
+            width: 100%;
+        }
+    }
+    &__more-pics {
+        width: 36px;
+        height: 36px;
+        background: transparent;
+        border: 1px solid #978F7F;
+        cursor: pointer;
+    }
     &__back {
         position: absolute;
         top: 53px;
