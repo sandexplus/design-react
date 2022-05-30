@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 const AdminLogin = () => {
 
-    const baseUrl = 'https://freckle-pretty-snail.glitch.me/';
+    const baseUrl = 'https://cloudy-foam-airport.glitch.me/';
 
     const [data, setData] = useState([]);
     
